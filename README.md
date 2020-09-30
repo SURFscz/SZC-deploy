@@ -55,11 +55,14 @@ To get started, do the following:
 
 - Supply the vm secret to decrypt the vault
     - `echo [vault-secret] > secret_vm`
-    - OR replace the encrypted vault secrets `google_client_id` and `google_client_secret`  
-    in environment/vm/secrets/all.yml.  
+    - OR replace the encrypted vault secrets `google_client_id` and `google_client_secret`
+    in environment/vm/secrets/all.yml.
     But you still need to insert a dummy secret in secret_vm.
 
     The `[vault-secret]` can be found on the SURFnet SRAM wiki.
+
+- Install the required Ansible modules
+    - `ansible-galaxy collection install -r requirements.yml`
 
 - set up the containers and start the deploy:
     - `./start-vm`
