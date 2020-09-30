@@ -2,7 +2,7 @@
 sbs_openidc_timeout: 86400
 
 sbs_repository: https://github.com/SURFscz/SBS.git
-sbs_version: master
+sbs_version: main
 
 sbs_work_dir: "/opt/sbs"
 sbs_git_dir: "{{ sbs_work_dir }}/sbs"
@@ -27,8 +27,10 @@ sbs_restricted_co_default_org: "example.org"
 sbs_mail_sender_name: "SURFnet"
 sbs_mail_sender_email: "no-reply@surfnet.nl"
 
-sbs_wiki_link: "https://wiki.surfnet.nl/display/SCZ/SCZ+Public+Space"
+sbs_wiki_link: "https://www.example.org/wiki"
 
 sbs_backend_port: 80
 
 sbs_oidc_config_url: "https://{{ hostnames.proxy }}/.well-known/openid-configuration"
+
+sbs_cron_hour_of_day: 4

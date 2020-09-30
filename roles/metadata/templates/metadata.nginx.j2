@@ -12,4 +12,6 @@ server {
         location / {
                 autoindex on;
         }
+        rewrite ^/proxy_idp.xml$ {{proxy_metadata_baseurl}}/frontend.xml permanent;
+        rewrite ^/proxy_sp.xml$  {{proxy_metadata_baseurl}}/backend.xml  permanent;
 }

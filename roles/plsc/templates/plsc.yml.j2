@@ -1,21 +1,21 @@
 ---
 ldap:
   src:
-    uri: ldapi:///
-    basedn: {{ services_ldap.basedn }}
-    binddn: external
-    passwd: {{ services_ldap_password }}
+    uri: "ldapi:///"
+    basedn: "{{ services_ldap.basedn }}"
+    binddn: "external"
+    passwd: "{{ services_ldap_password }}"
   dst:
-    uri: ldapi:///
-    basedn: {{ services_ldap.basedn }}
-    binddn: external
-    passwd: {{ services_ldap_password }}
+    uri: "ldapi:///"
+    basedn: "{{ services_ldap.basedn }}"
+    binddn: "external"
+    passwd: "{{ services_ldap_password }}"
 sbs:
   src:
     host: "{{ sbs_base_url }}"
-    user: sysread
+    user: "sysread"
     passwd: "{{ sbs_sysread_password }}"
     verify_ssl: {{ false if environment_name=='vm' else true }}
-pwd: changethispassword
+pwd: "changethispassword"
 uid: 1000
 gid: 1000

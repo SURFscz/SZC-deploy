@@ -21,16 +21,15 @@
 
 - name: Insert Microsoft authsource
   when: ms_client_id is defined
-  blockinfile:
-    path: "{{ simplesaml_project_dir }}/simplesaml/config/authsources.php"
-    insertbefore: "\\);"
-    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostnames.ms }}"
-    block: |
-        'windowslive' => array(
-            'authwindowslive:LiveID',
-            'key' => '{{ ms_client_id }}',
-            'secret' => '{{ ms_client_secret }}'
-        ),
+  copy:
+    dest: "{{ simplesaml_authsources_dir }}/20-microsoft_idp.inc"
+    content: |
+      <?php
+      $config['windowslive'] = array(
+          'authwindowslive:LiveID',
+          'key' => '{{ ms_client_id }}',
+          'secret' => '{{ ms_client_secret }}'
+      );
 
 - name: Enable Microsoft LiveID module
   when: ms_client_id is defined
@@ -43,54 +42,53 @@
 
 - name: Insert Microsoft IdP hosted
   when: ms_client_id is defined
-  blockinfile:
-    path: "{{ simplesaml_project_dir }}/simplesaml/metadata/saml20-idp-hosted.php"
-    insertafter: EOF
-    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostnames.ms }}"
-    block: |
-        $metadata['__DYNAMIC:5__'] = array(
-                'host' => '{{ hostnames.ms }}',
-                'OrganizationName' => '{{ environment_string }} Microsoft IdP',
-                'OrganizationDisplayName' => '{{ environment_string }} Microsoft IdP',
-                'OrganizationURL' => '{{ hostnames.ms }}',
-                'UIInfo' => array(
-                'DisplayName' => array(
-                        'en' => '{{ environment_string }} Microsoft IdP'
-                    ),
-                    'Description' => array(
-                        'en' => '{{ environment_string }} Microsoft IdP description'
-                    ),
-                    'Logo' => array( array(
-                        'url' => 'https://{{ hostnames.ms }}'
-                                .'/saml/resources/icons/ssplogo-fish-small.png',
-                        'width' => 60,
-                        'height' => 41
-                    ) )
-                ),
-                'privatekey' => 'server.pem',
-                'certificate' => 'server.crt',
-                'auth' => 'windowslive',
-                'signature.algorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
-                'authproc' => array(
-                        // First scope windowslive.id
-                        100 => array('class' => 'core:PHP',
-                                'code' => '
-                                        if (empty($attributes["windowslive.id"])) {
-                                          throw new Exception("Missing windowslive.id attribute.");
-                                        }
-                                        $sub = $attributes["windowslive.id"][0];
-                                        $sub .= "@{{hostnames.ms}}";
-                                        $attributes["sub"] = array($sub);
-                                '),
-                        // Convert OIDC names to SAML.
-                        110 => array('class' => 'core:AttributeMap', 'ms2urn'),
-                        // Set NameID to eppn
-                        120 => array('class' => 'saml:AttributeNameID',
-                            'attribute' => 'urn:mace:dir:attribute-def:eduPersonPrincipalName',
-                            'Format' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
-                        ),
-                ),
-        );
+  copy:
+    dest: "{{ simplesaml_idpmetadata_dir }}/20-microsoft.inc"
+    content: |
+      <?php
+      $metadata['__DYNAMIC:5__'] = array(
+        'host' => '{{ hostnames.ms }}',
+        'OrganizationName' => '{{ environment_string }} Microsoft IdP',
+        'OrganizationDisplayName' => '{{ environment_string }} Microsoft IdP',
+        'OrganizationURL' => '{{ hostnames.ms }}',
+        'UIInfo' => array(
+        'DisplayName' => array(
+            'en' => '{{ environment_string }} Microsoft IdP'
+          ),
+          'Description' => array(
+            'en' => '{{ environment_string }} Microsoft IdP description'
+          ),
+          'Logo' => array( array(
+            'url' => 'https://{{ hostnames.ms }}'
+                    .'/saml/resources/icons/ssplogo-fish-small.png',
+            'width' => 60,
+            'height' => 41
+          ) )
+        ),
+        'privatekey' => 'server.pem',
+        'certificate' => 'server.crt',
+        'auth' => 'windowslive',
+        'signature.algorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
+        'authproc' => array(
+          // First scope windowslive.id
+          100 => array('class' => 'core:PHP',
+            'code' => '
+              if (empty($attributes["windowslive.id"])) {
+                throw new Exception("Missing windowslive.id attribute.");
+              }
+              $sub = $attributes["windowslive.id"][0];
+              $sub .= "@{{hostnames.ms}}";
+              $attributes["sub"] = array($sub);
+            '),
+          // Convert OIDC names to SAML.
+          110 => array('class' => 'core:AttributeMap', 'ms2urn'),
+          // Set NameID to eppn
+          120 => array('class' => 'saml:AttributeNameID',
+            'attribute' => 'urn:mace:dir:attribute-def:eduPersonPrincipalName',
+            'Format' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
+          ),
+        ),
+      );
 
 - name: Copy Microsoft attribute map
   when: ms_client_id is defined

@@ -1,9 +1,0 @@
-[Unit]
-Description=Create Metadata Runner
-
-[Service]
-User=root
-Group=root
-Type=oneshot
-WorkingDirectory={{ metadata_project_dir }}
-ExecStart={{ metadata_project_dir }}/create_metadata

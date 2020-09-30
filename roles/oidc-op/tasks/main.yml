@@ -1,0 +1,68 @@
+---
+- name: Ensure that packages are installed
+  apt:
+    name:
+      - python3
+      - python3-virtualenv
+      - virtualenv
+    state: present
+
+- name: fetch oidc-op from {{ oidc_op_repo_url }}, version {{ oidc_op_repo_version }}
+  git:
+    repo: "{{ oidc_op_repo_url }}"
+    dest: "{{ oidc_dir }}"
+    version: "{{ oidc_op_repo_version }}"
+
+- name: Create oidc-op virtualenv
+  pip:
+    name: "{{ oidc_dir }}"
+    virtualenv: "{{ oidc_dir }}"
+    virtualenv_python: python3
+  # probably an ansible bug, this keeps being hit as changed
+  changed_when: false
+
+- name: Install flask_op requirements
+  pip:
+    requirements: "{{ oidc_dir }}/flask_op/requirements.txt"
+    virtualenv: "{{ oidc_dir }}"
+
+- name: "Make server executable"
+  file:
+    dest: "{{ oidc_dir }}/flask_op/server.py"
+    mode: 'a+x'
+
+- name: "Copy users and passwd files"
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{oidc_dir }}/flask_op/{{ item }}"
+    mode: 0644
+  with_items:
+    - sram_users.json
+    - sram_passwd.json
+    - config_op.yaml
+
+- name: Make sure cdb directory exists
+  file:
+    path: "{{ oidc_dir }}/flask_op/cdb"
+    state: directory
+    mode: 0755
+
+- name: "Create client config if it doesn't exist"
+  template:
+    src: "client_id.j2"
+    dest: "{{ oidc_dir }}/flask_op/cdb/{{ sbs_client_id }}"
+    mode: 0644
+
+- name: Create oidc-op systemd service
+  template:
+    src: "oidc-op.service.j2"
+    dest: "/etc/systemd/system/oidc-op.service"
+  register: oidc_op_systemd
+
+- name: enable oidc-op
+  systemd:
+    name: 'oidc-op'
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+  when: oidc_op_systemd.changed

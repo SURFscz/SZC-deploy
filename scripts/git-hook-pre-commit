@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# correctly setup paths on MacOS
+if [ -x /usr/libexec/path_helper ]; then
+	eval `/usr/libexec/path_helper -s`
+fi
+
 if git rev-parse --verify HEAD >/dev/null 2>&1
 then
 	against=HEAD

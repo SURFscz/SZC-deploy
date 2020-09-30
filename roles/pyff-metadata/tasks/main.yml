@@ -1,0 +1,30 @@
+---
+
+- name: install PyFF
+  import_role:
+    name: "pyff"
+
+- name: Write source metadata certificate
+  template:
+    src: "feed.xrd.j2"
+    dest: "{{metadata_idps_xrd}}"
+  notify: "run pyff-metadata job"
+
+- name: Create pyFF mdq configuration
+  template:
+    src: "idp_feed.fd.j2"
+    dest: "{{ pyff_env_dir }}/idp_feed.fd"
+  become: "yes"
+  become_user: "pyff"
+  notify: "run pyff-metadata job"
+
+- name: Create pyFF systemd job timer
+  template:
+    src: "{{item}}.j2"
+    dest: "/etc/systemd/system/{{item}}"
+  with_items:
+    - "pyff-metadata.service"
+    - "pyff-metadata.timer"
+  notify:
+    - "enable pyff-metadata job"
+    - "run pyff-metadata job"

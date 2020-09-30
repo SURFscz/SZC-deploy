@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XRDS xmlns="http://docs.oasis-open.org/ns/xri/xrd-1.0">
+    <XRD>
+        <Subject>{{metadata_idps_feed}}</Subject>
+        <Link rel="urn:oasis:names:tc:SAML:2.0:metadata" href="{{metadata_idps_feed}}">
+            <Title>SWAMID</Title>
+            <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+                <ds:X509Data>
+                    <ds:X509Certificate>{{ metadata_idps_cert | barepem }}</ds:X509Certificate>
+                </ds:X509Data>
+          </ds:KeyInfo>
+        </Link>
+    </XRD>
+</XRDS>

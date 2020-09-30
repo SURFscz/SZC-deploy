@@ -6,7 +6,8 @@ Listen {{ sp_test_port }}
         ServerAdmin webmaster@localhost
         DocumentRoot /var/www/html
 
-        Alias /saml /opt/simplesaml/simplesaml/www
+        Alias /saml {{simplesaml_project_dir}}/simplesaml/www
+        Alias / /var/www/html/sp-test.php
 
         ErrorLog ${APACHE_LOG_DIR}/error.log
         CustomLog ${APACHE_LOG_DIR}/access.log combined

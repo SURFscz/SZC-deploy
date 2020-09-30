@@ -1,14 +1,20 @@
 # installs nginx to handle static file and reverse-proxy chrerrypy
 ---
 - name: install NGINX
-  apt: name=nginx state=present
+  apt:
+    name: nginx
+    state: present
 
 - name: remove default NGINX sites
-  file: dest=/etc/nginx/sites-enabled/default state=absent
+  file:
+    dest: "/etc/nginx/sites-enabled/default"
+    state: absent
   notify: restart nginx
 
 - name: install NGINX config file
-  template: src=nginx-pyff.conf.j2 dest=/etc/nginx/sites-enabled/00-pyff.conf
+  template:
+    src: "nginx-pyff.conf.j2"
+    dest: "/etc/nginx/sites-enabled/00-pyff.conf"
   notify: restart nginx
 
 - name: install proxy_log config file
@@ -17,5 +23,7 @@
     dest: "/etc/nginx/conf.d"
 
 - name: enable NGINX
-  service: name=nginx state=started enabled=true
-
+  service:
+    name: nginx
+    state: started
+    enabled: true

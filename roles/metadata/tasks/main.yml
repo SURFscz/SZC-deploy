@@ -7,16 +7,14 @@
       - xmlsec1
     state: present
 
-- name: Remove obsolete cron file
+- name: Create directories
   file:
-    path: /etc/cron.d/create_metadata
-    state: absent
-
-- name: Create project directory
-  file: path="{{ metadata_project_dir }}" state=directory mode=0755
-
-- name: Create html directory
-  file: path="{{ metadata_documentroot }}" state=directory mode=0755
+    path: "{{ item }}"
+    state: "directory"
+    mode: "0755"
+  with_items:
+    - "{{ metadata_project_dir }}"
+    - "{{ metadata_documentroot }}"
 
 - name: Copy metadata nginx configuration
   template:
@@ -32,60 +30,40 @@
     state: link
   notify: restart nginx
 
-- name: List all xml/xsl files
-  find:
-    paths: "{{ metadata_project_dir }}"
-    patterns:
-      - "*.xml"
-      - "*.xsl"
-  register: oldfiles_glob
+- name: Install index page
+  template:
+    src: "index.html.j2"
+    dest: "{{metadata_documentroot}}/index.html"
+    mode: 0644
 
-- name: Remove old metadata and stylesheet files
+- name: Install link to idp feed
   file:
-    path: "{{ item.path }}"
-    state: absent
-  when: "item.path|basename not in xsl_files"
-  with_items:
-    - "{{ oldfiles_glob.files }}"
-  notify: run metadata cronjob
+    dest: "{{metadata_documentroot}}/idps.xml"
+    src: "{{metadata_idps_targetfile}}"
+    state: "link"
+    force: true
 
-- name: Copy xsl files in place
+- name: Install logo
   copy:
     src: "{{ item }}"
-    dest: "{{ metadata_project_dir }}/{{ item }}"
-  with_items: "{{xsl_files}}"
-  notify: run metadata cronjob
-
-- name: Copy eduGAIN public metadata signing cert
-  copy:
-    content: "{{ edugain_cert }}"
-    dest: "{{ metadata_project_dir }}/edugain.crt"
-  notify: run metadata cronjob
-
-- name: Copy xsl processing script script in place
-  template:
-    src: create_metadata.j2
-    dest: "{{ metadata_project_dir }}/create_metadata"
-    mode: 0755
-  notify: run metadata cronjob
-
-- name: Copy metadata service files
-  template:
-    src: "{{item}}.j2"
-    dest: "/etc/systemd/system/{{item}}"
+    dest: "{{metadata_documentroot}}/"
+    mode: "0644"
   with_items:
-    - metadata.service
-    - metadata.timer
-  notify:
-    - enable metadata job
+    - "surf.svg"
+    - "surf.png"
 
-- name: Install logos
-  copy:
-    src: "{{item}}"
-    dest: "{{ metadata_documentroot }}/{{item}}"
-    owner: www-data
-    group: www-data
+- name: Remove obsolete files
+  file:
+    path: "{{metadata_documentroot}}/{{item}}"
+    state: "absent"
   with_items:
-    - Light-Bulb_icon_by_Till_Teenck.svg
-    - Light-Bulb_icon_by_Till_Teenck_200px.png
-    - Light-Bulb_icon_by_Till_Teenck_1000px.png
+    - "Light-Bulb_icon_by_Till_Teenck.svg"
+    - "Light-Bulb_icon_by_Till_Teenck_1000px.png"
+    - "Light-Bulb_icon_by_Till_Teenck_200px.png"
+    - "proxy_idp.xml"
+    - "proxy_sp.xml"
+    - "sc_edugain.xml"
+    - "sc_edugain_idps.xml"
+    - "sc_edugain_idps_nologo.xml"
+    - "sc_edugain_idps_nologo_nohide.xml"
+    - "sc_edugain_idps_nologo_nohide_nosc.xml"

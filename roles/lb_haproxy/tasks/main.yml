@@ -79,7 +79,7 @@
         src: "ocsp-letsencrypt.j2"
         dest: "/etc/letsencrypt/renewal-hooks/post/"
         mode: '0755'
-  when: enable_https and not use_fixed_cert
+  when: enable_https and environment_name != 'vm'
 
 - name: enable haproxy
   systemd:

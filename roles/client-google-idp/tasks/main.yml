@@ -25,71 +25,69 @@
 
 - name: Insert Google authsource
   when: google_client_id is defined
-  blockinfile:
-    path: "{{ simplesaml_project_dir }}/simplesaml/config/authsources.php"
-    insertbefore: "\\);"
-    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostnames.google }}"
-    block: |
-        'oidc-google' => array(
-            'openidconnect:Connect',
-            'client_id'           => '{{ google_client_id }}',
-            'client_secret'       => '{{ google_client_secret }}',
-            'token_endpoint'      => 'https://www.googleapis.com/oauth2/v4/token',
-            'user_info_endpoint'  => 'https://www.googleapis.com/oauth2/v3/userinfo',
-            'auth_endpoint'       => 'https://accounts.google.com/o/oauth2/v2/auth',
-            'sslcapath'           => '/etc/ssl/certs',
-        ),
+  copy:
+    dest: "{{ simplesaml_authsources_dir }}/20-google_idp.inc"
+    content: |
+      <?php
+      $config['oidc-google'] = array(
+          'openidconnect:Connect',
+          'client_id'           => '{{ google_client_id }}',
+          'client_secret'       => '{{ google_client_secret }}',
+          'token_endpoint'      => 'https://www.googleapis.com/oauth2/v4/token',
+          'user_info_endpoint'  => 'https://www.googleapis.com/oauth2/v3/userinfo',
+          'auth_endpoint'       => 'https://accounts.google.com/o/oauth2/v2/auth',
+          'sslcapath'           => '/etc/ssl/certs',
+      );
 
 - name: Insert Google IdP hosted
   when: google_client_id is defined
-  blockinfile:
-    path: "{{ simplesaml_project_dir }}/simplesaml/metadata/saml20-idp-hosted.php"
-    insertafter: EOF
-    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostnames.google }}"
-    block: |
-        $metadata['__DYNAMIC:2__'] = array(
-                'host' => '{{ hostnames.google }}',
-                'OrganizationName' => '{{ environment_string }} Google IdP',
-                'OrganizationDisplayName' => '{{ environment_string }} Google IdP',
-                'OrganizationURL' => '{{ hostnames.google }}',
-                'UIInfo' => array(
-                'DisplayName' => array(
-                        'en' => '{{ environment_string }} Google IdP'
-                    ),
-                    'Description' => array(
-                        'en' => '{{ environment_string }} Google IdP description'
-                    ),
-                    'Logo' => array( array(
-                        'url' => 'https://{{ hostnames.google }}'
-                                .'/saml/resources/icons/ssplogo-fish-small.png',
-                        'width' => 60,
-                        'height' => 41
-                    ) )
-                ),
-                'privatekey' => 'server.pem',
-                'certificate' => 'server.crt',
-                'auth' => 'oidc-google',
-                'signature.algorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
-                'authproc' => array(
-                        // First scope sub
-                        100 => array('class' => 'core:PHP',
-                                'code' => '
-                                        if (empty($attributes["sub"])) {
-                                                throw new Exception("Missing sub attribute.");
-                                        }
-                                        $sub = $attributes["sub"][0];
-                                        $sub .= "@{{hostnames.google}}";
-                                        $attributes["sub"] = array($sub);
-                                '),
-                        // Convert OIDC names to SAML.
-                        110 => array('class' => 'core:AttributeMap', 'google2urn'),
-                        // Set NameID to eppn
-                        120 => array('class' => 'saml:AttributeNameID',
-                            'attribute' => 'urn:mace:dir:attribute-def:eduPersonPrincipalName',
-                            'Format' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
-                        ),
-                ),
-        );
+  copy:
+    dest: "{{ simplesaml_idpmetadata_dir }}20-google.inc"
+    content: |
+      <?php
+      $metadata['__DYNAMIC:2__'] = array(
+              'host' => '{{ hostnames.google }}',
+              'OrganizationName' => '{{ environment_string }} Google IdP',
+              'OrganizationDisplayName' => '{{ environment_string }} Google IdP',
+              'OrganizationURL' => '{{ hostnames.google }}',
+              'UIInfo' => array(
+              'DisplayName' => array(
+                      'en' => '{{ environment_string }} Google IdP'
+                  ),
+                  'Description' => array(
+                      'en' => '{{ environment_string }} Google IdP description'
+                  ),
+                  'Logo' => array( array(
+                      'url' => 'https://{{ hostnames.google }}'
+                              .'/saml/resources/icons/ssplogo-fish-small.png',
+                      'width' => 60,
+                      'height' => 41
+                  ) )
+              ),
+              'privatekey' => 'server.pem',
+              'certificate' => 'server.crt',
+              'auth' => 'oidc-google',
+              'signature.algorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
+              'authproc' => array(
+                      // First scope sub
+                      100 => array('class' => 'core:PHP',
+                              'code' => '
+                                      if (empty($attributes["sub"])) {
+                                              throw new Exception("Missing sub attribute.");
+                                      }
+                                      $sub = $attributes["sub"][0];
+                                      $sub .= "@{{hostnames.google}}";
+                                      $attributes["sub"] = array($sub);
+                              '),
+                      // Convert OIDC names to SAML.
+                      110 => array('class' => 'core:AttributeMap', 'google2urn'),
+                      // Set NameID to eppn
+                      120 => array('class' => 'saml:AttributeNameID',
+                          'attribute' => 'urn:mace:dir:attribute-def:eduPersonPrincipalName',
+                          'Format' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
+                      ),
+              ),
+      );
 
 - name: Copy Google attribute map
   copy:

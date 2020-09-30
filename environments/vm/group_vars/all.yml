@@ -78,8 +78,8 @@ scz_repo:
   satosa_ms: { name: "SATOSA microservices",   version: "scz-0.11",   src: "https://github.com/SURFscz/SATOSA-micro_services.git"          }
   pyff:      { name: "pyFF",                   version: "scz-0.8.1",  src: "https://github.com/SURFscz/pyFF.git"                           }
   cmservice: { name: "CMservice",              version: "scz-0.4",    src: "https://github.com/SURFscz/CMservice.git"                      }
-  sbs:       { name: "SBS",                    version: "master",     src: "https://github.com/SURFscz/SBS.git"                            }
-  plsc:      { name: "pLSC",                   version: "sbs-ordered-flat", src: "https://github.com/SURFscz/plsc.git"                     }
+  sbs:       { name: "SBS",                    version: "main",       src: "https://github.com/SURFscz/SBS.git"                            }
+  plsc:      { name: "pLSC",                   version: "main",       src: "https://github.com/SURFscz/plsc.git"                           }
 # yamllint enable rule:line-length
 
 # poor man's user management

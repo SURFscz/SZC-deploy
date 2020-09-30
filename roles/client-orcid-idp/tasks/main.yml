@@ -36,9 +36,8 @@
 
     - name: Insert ORCID authsource
       blockinfile:
-        path: "{{ simplesaml_project_dir }}/simplesaml/config/authsources.php"
-        insertbefore: "\\);"
-        marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostnames.orcid }}"
+        path: "{{ simplesaml_authsources_dir }}/20-orcid_idp.inc"
+        create: true
         block: |
             'orcid' => array(
                 'authorcid:ORCID',
@@ -47,54 +46,53 @@
             ),
 
     - name: Insert ORCID IdP hosted
-      blockinfile:
-        path: "{{ simplesaml_project_dir }}/simplesaml/metadata/saml20-idp-hosted.php"
-        insertafter: EOF
-        marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostnames.orcid }}"
-        block: |
-            $metadata['__DYNAMIC:3__'] = array(
-                    'host' => '{{ hostnames.orcid }}',
-                    'OrganizationName' => '{{ environment_string }} ORCID IdP',
-                    'OrganizationDisplayName' => '{{ environment_string }} ORCID IdP',
-                    'OrganizationURL' => '{{ hostnames.orcid }}',
-                    'UIInfo' => array(
-                    'DisplayName' => array(
-                            'en' => '{{ environment_string }} ORCID IdP'
-                        ),
-                        'Description' => array(
-                            'en' => '{{ environment_string }} ORCID IdP description'
-                        ),
-                        'Logo' => array( array(
-                            'url' => 'https://{{ hostnames.orcid }}'
-                                    .'/saml/resources/icons/ssplogo-fish-small.png',
-                            'width' => 60,
-                            'height' => 41
-                        ) )
-                    ),
-                    'privatekey' => 'server.pem',
-                    'certificate' => 'server.crt',
-                    'auth' => 'orcid',
-                    'signature.algorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
-                    'authproc' => array(
-                            // First scope sub
-                            100 => array('class' => 'core:PHP',
-                                    'code' => '
-                                            if (empty($attributes["orcid.path"])) {
-                                              throw new Exception("Missing orcid.path attribute.");
-                                            }
-                                            $path = $attributes["orcid.path"][0];
-                                            $path .= "@{{hostnames.orcid}}";
-                                            $attributes["orcid.path"] = array($path);
-                                    '),
-                            // Convert OIDC names to SAML.
-                            110 => array('class' => 'core:AttributeMap', 'orcid2urn'),
-                            // Set NameID to eppn
-                            120 => array('class' => 'saml:AttributeNameID',
-                                'attribute' => 'urn:mace:dir:attribute-def:eduPersonPrincipalName',
-                                'Format' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
-                            ),
-                    ),
-            );
+      copy:
+        dest: "{{ simplesaml_idpmetadata_dir }}/20-orcid.inc"
+        content: |
+          <?php
+          $metadata['__DYNAMIC:3__'] = array(
+            'host' => '{{ hostnames.orcid }}',
+            'OrganizationName' => '{{ environment_string }} ORCID IdP',
+            'OrganizationDisplayName' => '{{ environment_string }} ORCID IdP',
+            'OrganizationURL' => '{{ hostnames.orcid }}',
+            'UIInfo' => array(
+              'DisplayName' => array(
+                'en' => '{{ environment_string }} ORCID IdP'
+              ),
+              'Description' => array(
+                'en' => '{{ environment_string }} ORCID IdP description'
+              ),
+              'Logo' => array( array(
+                'url' => 'https://{{ hostnames.orcid }}'
+                        .'/saml/resources/icons/ssplogo-fish-small.png',
+                'width' => 60,
+                'height' => 41
+              ) )
+            ),
+            'privatekey' => 'server.pem',
+            'certificate' => 'server.crt',
+            'auth' => 'orcid',
+            'signature.algorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
+            'authproc' => array(
+              // First scope sub
+              100 => array('class' => 'core:PHP',
+                'code' => '
+                  if (empty($attributes["orcid.path"])) {
+                    throw new Exception("Missing orcid.path attribute.");
+                  }
+                  $path = $attributes["orcid.path"][0];
+                  $path .= "@{{hostnames.orcid}}";
+                  $attributes["orcid.path"] = array($path);
+                '),
+              // Convert OIDC names to SAML.
+              110 => array('class' => 'core:AttributeMap', 'orcid2urn'),
+              // Set NameID to eppn
+              120 => array('class' => 'saml:AttributeNameID',
+                'attribute' => 'urn:mace:dir:attribute-def:eduPersonPrincipalName',
+                'Format' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
+              ),
+            ),
+          );
   when: orcid_client_id is defined
 
 # Orcid Sandbox
@@ -115,64 +113,62 @@
       notify: restart Apache
 
     - name: Insert ORCID Sandbox authsource
-      blockinfile:
-        path: "{{ simplesaml_project_dir }}/simplesaml/config/authsources.php"
-        insertbefore: "\\);"
-        marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostnames.orcid_sb }}"
-        block: |
-            'orcid-sb' => array(
-                'authorcid:ORCID',
-                'clientId'           => '{{ orcid_sb_client_id }}',
-                'clientSecret'       => '{{ orcid_sb_client_secret }}'
-            ),
+      copy:
+        dest: "{{ simplesaml_authsources_dir }}/20-orcid_sb_idp.inc"
+        content: |
+          <?php
+          $config['orcid-sb'] = array(
+              'authorcid:ORCID',
+              'clientId'           => '{{ orcid_sb_client_id }}',
+              'clientSecret'       => '{{ orcid_sb_client_secret }}'
+          );
 
     - name: Insert ORCID Sanbox IdP hosted
-      blockinfile:
-        path: "{{ simplesaml_project_dir }}/simplesaml/metadata/saml20-idp-hosted.php"
-        insertafter: EOF
-        marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostnames.orcid_sb }}"
-        block: |
-            $metadata['__DYNAMIC:4__'] = array(
-                    'host' => '{{ hostnames.orcid_sb }}',
-                    'OrganizationName' => '{{ environment_string }} ORCID Sandbox IdP',
-                    'OrganizationDisplayName' => '{{ environment_string }} ORCID Sandbox IdP',
-                    'OrganizationURL' => '{{ hostnames.orcid_sb }}',
-                    'UIInfo' => array(
-                    'DisplayName' => array(
-                            'en' => '{{ environment_string }} ORCID Sandbox IdP'
-                        ),
-                        'Description' => array(
-                            'en' => '{{ environment_string }} ORCID IdP Sandbox description'
-                        ),
-                        'Logo' => array( array(
-                            'url' => 'https://{{ hostnames.orcid_sb }}'
-                                    .'/saml/resources/icons/ssplogo-fish-small.png',
-                            'width' => 60,
-                            'height' => 41
-                        ) )
-                    ),
-                    'privatekey' => 'server.pem',
-                    'certificate' => 'server.crt',
-                    'auth' => 'orcid-sb',
-                    'signature.algorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
-                    'authproc' => array(
-                            // First scope sub
-                            100 => array('class' => 'core:PHP',
-                                    'code' => '
-                                            if (empty($attributes["orcid.path"])) {
-                                              throw new Exception("Missing orcid.path attribute.");
-                                            }
-                                            $path = $attributes["orcid.path"][0];
-                                            $path .= "@{{hostnames.orcid}}";
-                                            $attributes["orcid.path"] = array($path);
-                                    '),
-                            // Convert OIDC names to SAML.
-                            110 => array('class' => 'core:AttributeMap', 'orcid2urn'),
-                            // Set NameID to eppn
-                            120 => array('class' => 'saml:AttributeNameID',
-                                'attribute' => 'urn:mace:dir:attribute-def:eduPersonPrincipalName',
-                                'Format' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
-                            ),
-                    ),
-            );
+      copy:
+        dest: "{{ simplesaml_idpmetadata_dir }}/20-orcid_sb.inc"
+        content: |
+          <?php
+          $metadata['__DYNAMIC:4__'] = array(
+            'host' => '{{ hostnames.orcid_sb }}',
+            'OrganizationName' => '{{ environment_string }} ORCID Sandbox IdP',
+            'OrganizationDisplayName' => '{{ environment_string }} ORCID Sandbox IdP',
+            'OrganizationURL' => '{{ hostnames.orcid_sb }}',
+            'UIInfo' => array(
+            'DisplayName' => array(
+              'en' => '{{ environment_string }} ORCID Sandbox IdP'
+            ),
+            'Description' => array(
+              'en' => '{{ environment_string }} ORCID IdP Sandbox description'
+            ),
+            'Logo' => array( array(
+              'url' => 'https://{{ hostnames.orcid_sb }}'
+                      .'/saml/resources/icons/ssplogo-fish-small.png',
+              'width' => 60,
+              'height' => 41
+            ) )
+            ),
+            'privatekey' => 'server.pem',
+            'certificate' => 'server.crt',
+            'auth' => 'orcid-sb',
+            'signature.algorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
+            'authproc' => array(
+            // First scope sub
+              100 => array('class' => 'core:PHP',
+                'code' => '
+                  if (empty($attributes["orcid.path"])) {
+                    throw new Exception("Missing orcid.path attribute.");
+                  }
+                  $path = $attributes["orcid.path"][0];
+                  $path .= "@{{hostnames.orcid}}";
+                  $attributes["orcid.path"] = array($path);
+                '),
+              // Convert OIDC names to SAML.
+              110 => array('class' => 'core:AttributeMap', 'orcid2urn'),
+              // Set NameID to eppn
+              120 => array('class' => 'saml:AttributeNameID',
+                'attribute' => 'urn:mace:dir:attribute-def:eduPersonPrincipalName',
+                'Format' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
+              ),
+            ),
+          );
   when: orcid_sb_client_id is defined

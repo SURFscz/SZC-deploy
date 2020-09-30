@@ -1,0 +1,6 @@
+---
+oidc_dir: /opt/oidc-op
+
+oidc_op_repo_url: https://github.com/IdentityPython/oidc-op.git
+oidc_op_repo_version: master
+oidc_op_port: 5000

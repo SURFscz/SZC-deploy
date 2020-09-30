@@ -2,7 +2,7 @@
 - name: Create new SP test root index.php
   template:
     src: sp_index.php.j2
-    dest: /var/www/html/index.php
+    dest: /var/www/html/sp-test.php
     mode: 0644
 
 - name: Add websites

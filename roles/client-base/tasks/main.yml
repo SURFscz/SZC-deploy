@@ -79,7 +79,7 @@
     src: "composer.lock"
     dest: "{{ simplesaml_project_dir }}/simplesaml"
 
-- name: Install OIDC module
+- name: Install OIDC modules
   composer:
     working_dir: "{{ simplesaml_project_dir }}/simplesaml"
     command: install
@@ -90,10 +90,21 @@
     src: config.php.j2
     dest: "{{ simplesaml_project_dir }}/simplesaml/config/config.php"
 
+- name: SimpleSaml main authsources
+  template:
+    src: "authsources.php.j2"
+    dest: "{{ simplesaml_project_dir }}/simplesaml/config/authsources.php"
+
+- name: SimpleSaml authsources include dir
+  file:
+    dest: "{{ simplesaml_authsources_dir }}"
+    state: "directory"
+    mode: "0755"
+
 - name: SimpleSaml test authsources
   template:
-    src: authsources.php.j2
-    dest: "{{ simplesaml_project_dir }}/simplesaml/config/authsources.php"
+    src: authsources-base.inc.j2
+    dest: "{{ simplesaml_authsources_dir }}/00-base.inc"
 
 - name: SimpleSaml enable authcrypt
   file:
@@ -102,12 +113,21 @@
     modification_time: preserve
     state: touch
 
+- name: SimpleSaml main idp metadata
+  template:
+    src: "saml20-idp-hosted.php.j2"
+    dest: "{{ simplesaml_project_dir }}/simplesaml/metadata/saml20-idp-hosted.php"
+
+- name: SimpleSaml idp metadata include dir
+  file:
+    dest: "{{ simplesaml_idpmetadata_dir }}"
+    state: "directory"
+    mode: "0755"
+
 - name: SimpleSaml {{ environment_string }} metadata
   template:
-    src: "{{ item }}.j2"
-    dest: "{{ simplesaml_project_dir }}/simplesaml/metadata/{{ item }}"
-  with_items:
-    - saml20-idp-hosted.php
+    src: "idp-base.inc.j2"
+    dest: "{{simplesaml_idpmetadata_dir}}/00-base.inc"
 
 # before, we used to generate a certificate dynamically, but that was
 # annoying, because then we would need to exchange the metadata over https

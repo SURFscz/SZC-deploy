@@ -1,0 +1,126 @@
+<?php
+// vim:ft=php
+
+$config['admin'] = array(
+        // The default is to use core:AdminPassword, but it can be replaced with
+        // any authentication source.
+
+        'core:AdminPassword',
+    );
+
+// An authentication source which can authenticate against both SAML 2.0
+// and Shibboleth 1.3 IdPs.
+$config['default-sp'] = array(
+        'saml:SP',
+
+        // The entity ID of this SP.
+        // Can be NULL/unset, in which case an entity ID is generated based on the metadata URL.
+        'entityID' => null,
+
+        // The entity ID of the IdP this should SP should contact.
+        // Can be NULL/unset, in which case the user will be shown a list of available IdPs.
+        'idp' => null,
+
+        // The URL to the discovery service.
+        // Can be NULL/unset, in which case a builtin discovery service will be used.
+        'discoURL' => null,
+
+        'UIInfo' => array(
+            'DisplayName' => array(
+                'en' => '{{ environment_string }} SP'
+             ),
+            'Description' => array(
+                'en' => '{{ environment_string }} SP description'
+             ),
+            'Logo' => array(
+                array(
+                        'url' => 'https://{{ hostnames.sp }}/saml/resources/icons/ssplogo-fish-small.png',
+                        'width' => 60,
+                        'height' => 41
+                    )
+            )
+        ),
+
+        /*
+         * WARNING: SHA-1 is disallowed starting January the 1st, 2014.
+         *
+         * Uncomment the following option to start using SHA-256 for your signatures.
+         * Currently, SimpleSAMLphp defaults to SHA-1, which has been deprecated since
+         * 2011, and will be disallowed by NIST as of 2014. Please refer to the following
+         * document for more information:
+         *
+         * http://csrc.nist.gov/publications/nistpubs/800-131A/sp800-131A.pdf
+         *
+         * If you are uncertain about identity providers supporting SHA-256 or other
+         * algorithms of the SHA-2 family, you can configure it individually in the
+         * IdP-remote metadata set for those that support it. Once you are certain that
+         * all your configured IdPs support SHA-2, you can safely remove the configuration
+         * options in the IdP-remote metadata set and uncomment the following option.
+         *
+         * Please refer to the hosted SP configuration reference for more information.
+          */
+        'signature.algorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
+
+        /*
+         * The attributes parameter must contain an array of desired attributes by the SP.
+         * The attributes can be expressed as an array of names or as an associative array
+         * in the form of 'friendlyName' => 'name'.
+         * The metadata will then be created as follows:
+         * <md:RequestedAttribute FriendlyName="friendlyName" Name="name" />
+         */
+        /*'attributes' => array(
+            'attrname' => 'urn:oid:x.x.x.x',
+        ),*/
+        /*'attributes.required' => array (
+            'urn:oid:x.x.x.x',
+        ),*/
+);
+
+$config['crypto-hash'] = array(
+        'authcrypt:Hash',
+{% if "baas" in client_idp_users %}
+        'baas:{{client_idp_users.baas}}' => array(
+            'urn:mace:dir:attribute-def:uid' => array('admin'),
+            'urn:mace:dir:attribute-def:eduPersonPrincipalName' => array('{{admin.eppn}}'),
+            'urn:mace:dir:attribute-def:givenName' => array('{{admin.fn}}'),
+            'urn:mace:dir:attribute-def:sn' => array('{{admin.sn}}'),
+            'urn:mace:terena.org:attribute-def:schacHomeOrganization' => array('{{admin.sho}}'),
+            'urn:mace:dir:attribute-def:mail' => array('{{admin.email}}'),
+            'urn:mace:dir:attribute-def:eduPersonAffiliation' => array('member', 'employee'),
+        ),
+{% endif %}
+{% if "student" in client_idp_users %}
+        'student:{{client_idp_users.student}}' => array(
+            'urn:mace:dir:attribute-def:uid' => array('testuid'),
+            'urn:mace:dir:attribute-def:eduPersonAffiliation' => array('member', 'student'),
+            'urn:mace:dir:attribute-def:displayName' => array('S. Tudent'),
+            'urn:mace:dir:attribute-def:mail' => array('some@mailaddress.org'),
+            'urn:mace:terena.org:attribute-def:schacHomeOrganization' => array('surfnet.nl'),
+            'urn:mace:dir:attribute-def:eduPersonPrincipalName' => array('eppn_student@surfnet.nl'),
+            'urn:mace:dir:attribute-def:postalAddress' => array('Waar je huis woont')
+        ),
+{% endif %}
+{% if "krak" in client_idp_users %}
+        'krak:{{client_idp_users.krak}}==' => array(
+            'urn:mace:dir:attribute-def:uid' => array('krakuid'),
+            'urn:mace:dir:attribute-def:eduPersonAffiliation' => array('member', 'student'),
+            'urn:mace:dir:attribute-def:displayName' => array('K. rak'),
+            'urn:mace:dir:attribute-def:mail' => array('krak@mailaddress.org'),
+            'urn:mace:terena.org:attribute-def:schacHomeOrganization' => array('surfnet.nl'),
+            'urn:mace:dir:attribute-def:eduPersonPrincipalName' => array('eppn_krak@surfnet.nl'),
+            'urn:mace:dir:attribute-def:postalAddress' => array('Waar je huis krakt'),
+            'urn:mace:dir:attribute-def:sn' => array('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam ac dictum velit. Vivamus auctor ligula sed ligula rutrum finibus. Mauris euismod velit vel quam vehicula, ut rutrum massa congue. Sed nisl mi, congue nec elit eu, dapibus vulputate ex. Pellentesque quis augue leo. Donec vestibulum nisi neque, vel auctor tortor rutrum vel. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla imperdiet nisi ex, eget eleifend nunc vestibulum interdum. Curabitur ligula arcu, mollis ut felis nec, gravida viverra odio. Proin tincidunt consequat felis, in dapibus sem eleifend nec. Nulla nec lectus nibh. Nunc velit velit, fringilla non risus nec, aliquam suscipit nisi. Aliquam non urna eget diam imperdiet congue in vel justo. Integer eget massa et metus tempor pulvinar at at lorem.  Praesent malesuada imperdiet sapien vel finibus. Mauris tincidunt diam et tortor efficitur, quis fringilla nibh fermentum. Nunc tincidunt, neque eget cursus viverra, magna neque sodales mauris, id lobortis nulla nisl ac lectus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Vivamus lacus nulla, aliquet eu mollis vitae, semper id est. Sed scelerisque odio at pharetra imperdiet. Nulla at sodales est. Ut sit amet sollicitudin lectus. Quisque interdum metus id varius dictum. Morbi viverra massa et tellus efficitur iaculis.  Proin tristique ligula a tincidunt tempor. Nam sed sem ut odio finibus faucibus. Donec dapibus blandit dictum. Integer gravida in justo eu scelerisque. Nulla eu magna sem. Aenean non mi ac elit aliquam sodales. Mauris cursus lectus eu ipsum finibus, in interdum magna porta. Praesent elementum lacus ut magna sodales porttitor quis nec mi. Donec convallis risus neque, sed placerat ex rhoncus vel. Integer rutrum arcu id nunc fermentum cursus. In at dictum ante. Nullam lacus metus, semper ut enim eget, sollicitudin tincidunt risus. Morbi luctus mauris et scelerisque accumsan. Nulla efficitur nec leo ac rutrum. In dapibus placerat lobortis. Proin maximus tortor lacus, et interdum ligula interdum at.')
+        ),
+{% endif %}
+{% if "employee" in client_idp_users %}
+        'employee:{{client_idp_users.employee}}' => array(
+            'urn:mace:dir:attribute-def:eduPersonAffiliation' => array('employee'),
+            'urn:mace:dir:attribute-def:displayName' => array('E. Mployee'),
+            'urn:mace:terena.org:attribute-def:schacHomeOrganization' => array('surfnet.nl'),
+            'urn:mace:dir:attribute-def:eduPersonPrincipalName' => array('eppn_employee@idptest.scz'),
+            'urn:mace:dir:attribute-def:eduPersonTargetedID' => array('eptid_student@surfnet.nl'),
+            'urn:mace:dir:attribute-def:mail' => array('mail@idptest.scz'),
+            'urn:mace:dir:attribute-def:postalAddress' => array('Antwoordnummer 1234')
+        ),
+{% endif %}
+);

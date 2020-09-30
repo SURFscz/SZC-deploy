@@ -15,6 +15,7 @@
   pip:
     name: virtualenv
     executable: pip
+  notify: "pyff changed"
 
 - name: create pyFF user
   user:
@@ -36,88 +37,51 @@
     mode: 0755
     owner: pyff
 
-- block:
-    # requirements.txt can be generated from virtualenv/bin/pip freeze
-    - name: Generate requirements.txt.j2 from template
-      template:
-        src: "requirements.txt.j2"
-        dest: "{{ pyff_project_dir }}/requirements.txt"
+# requirements.txt can be generated from virtualenv/bin/pip freeze
+- name: Generate requirements.txt.j2 from template
+  template:
+    src: "requirements.txt.j2"
+    dest: "{{ pyff_project_dir }}/requirements.txt"
 
-    - name: Install pyFF from requirements.txt
-      pip:
-        requirements: "{{ pyff_project_dir }}/requirements.txt"
-        virtualenv: "{{ pyff_env_dir }}"
-        virtualenv_python: python2
-      notify: "restart pyff"
-
-    - name: Create pyFF mdq configuration
-      template:
-        src: mdq.fd.j2
-        dest: "{{ pyff_env_dir }}/mdq.fd"
-      notify: "restart pyff"
-
-    - name: Create local metadata directory
-      file:
-        path: "{{ pyff_env_dir }}/metadata"
-        state: directory
-        mode: 0755
-
-    - name: Create certs directory
-      file:
-        path: "{{ pyff_env_dir }}/certs"
-        state: directory
-        mode: 0755
-
-    - name: create self-signed Metadata Signing SSL certs
-      shell: >
-        openssl genrsa -out "{{ pyff_env_dir }}/certs/{{ item }}.key" 2048;
-        openssl req -new -nodes -x509 -subj "/C=NL/CN={{ item }}"
-        -days 3650 -key "{{ pyff_env_dir }}/certs/{{ item }}.key"
-        -out "{{ pyff_env_dir }}/certs/{{ item }}.crt" -extensions v3_ca
-      args:
-        creates: "{{ pyff_env_dir }}/certs/{{ item }}.crt"
-      with_items:
-        - signing
-      notify: "restart pyff"
-
-  become: "yes"
+- name: Install pyFF from requirements.txt
+  pip:
+    requirements: "{{ pyff_project_dir }}/requirements.txt"
+    virtualenv: "{{ pyff_env_dir }}"
+    virtualenv_python: python2
+  notify: "pyff changed"
+  become: true
   become_user: pyff
 
-- name: Create pyFF systemd service
-  template:
-    src: "pyff.service.j2"
-    dest: "/etc/systemd/system/pyff.service"
-  register: pyff_systemd
+- name: Create certs directory
+  file:
+    path: "{{ pyff_env_dir }}/certs"
+    state: "directory"
+    owner: pyff
+    mode: 0755
 
-- name: enable pyff
-  systemd:
-    name: pyff
-    state: restarted
-    daemon_reload: yes
-    enabled: yes
-  when: pyff_systemd.changed
+- name: create self-signed Metadata Signing SSL certs
+  shell: >
+    openssl genrsa -out "{{ pyff_env_dir }}/certs/{{ item }}.key" 2048;
+    openssl req -new -nodes -x509 -subj "/C=NL/CN={{ item }}"
+    -days 3650 -key "{{ pyff_env_dir }}/certs/{{ item }}.key"
+    -out "{{ pyff_env_dir }}/certs/{{ item }}.crt" -extensions v3_ca
+  args:
+    creates: "{{ pyff_env_dir }}/certs/{{ item }}.crt"
+  with_items:
+    - signing
+  become: true
+  become_user: "pyff"
+  notify: "pyff changed"
+  when: metadata_signing_cert is not defined
 
-- name: Install filebeat configuration
-  template:
-    src: fb_pyffd.yml.j2
-    dest: /etc/filebeat/conf.d/fb_pyffd.yml
-  notify: "restart filebeat"
-
-- name: Copy rsyslog config
+- name: write fixed Metadata signing certificates
   copy:
-    src: "rsyslog_pyffd.conf"
-    dest: "/etc/rsyslog.d/pyffd.conf"
-  notify: "restart rsyslog"
-
-- name: Copy logrotate config
-  copy:
-    src: "logrotate_pyffd"
-    dest: "/etc/logrotate.d/pyffd"
-
-- name: set up nxginx proxy
-  include: nginx.yml
-
-# nginx needs to be restarted _now_ rather than at the end of the play
-- name: flush handlers
-  meta: flush_handlers
-
+    dest: "{{ pyff_env_dir }}/certs/{{ item.file }}"
+    content: "{{item.contents}}"
+    owner: pyff
+    mode: "{{item.mode}}"
+  with_items:
+    - { file: "signing.key", mode: "0600", contents: "{{metadata_signing_cert.priv}}" }
+    - { file: "signing.crt", mode: "0644", contents: "{{metadata_signing_cert.pub}}"  }
+  notify: "pyff changed"
+  when: metadata_signing_cert is defined

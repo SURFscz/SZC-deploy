@@ -1,0 +1,15 @@
+---
+http_proto: https
+
+# directory from which to serve static pyff content
+# (./static shoudl be a subdir)
+pyff_static_dir: "{{pyff_env_dir}}/src/pyff/src/pyff/site/"
+pyff_favicon:    "{{pyff_env_dir}}/lib/python2.7/site-packages/cherrypy/favicon.ico"
+
+# external
+pyff_host: "0.0.0.0"
+pyff_port: "8081"
+
+# internal, behind nginx
+pyff_cherrypy_host: "127.0.0.1"
+pyff_cherrypy_port: "8083"

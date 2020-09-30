@@ -14,25 +14,6 @@ Listen {{ sbs_backend_port }}
         SSLCertificateFile {{ ssl_certs_dir }}/{{ internal_base_domain }}.crt
         SSLCertificateKeyFile {{ ssl_certs_dir }}/{{ internal_base_domain }}.key
 
-        OIDCProviderMetadataURL {{ sbs_oidc_config_url }}
-        OIDCSSLValidateServer Off
-        OIDCClientID {{ sbs_client_id }}
-        OIDCClientSecret {{ sbs_client_secret }}
-        OIDCResponseType "code"
-        #OIDCScope "openid profile voperson_application_uid eduperson_principal_name eduperson_orcid email voperson_external_affiliation eduperson_scoped_affiliation eduperson_assurance eduperson_entitlement"
-        OIDCScope "openid profile email voperson_external_id eduperson_principal_name eduperson_orcid voperson_external_affiliation eduperson_scoped_affiliation eduperson_assurance eduperson_entitlement"
-        #OIDCAuthRequestParams claims={"userinfo":{"edumember_is_member_of":null,"schac_home_organisation":null,"eduperson_affiliation":null,"eduperson_entitlement":null,"nickname":null,"name":null,"cmuid":null,"email":null,"family_name":null,"eppn":null}}
-        #OIDCAuthRequestParams {"userinfo": {"eduperson_principal_name": ["student1@test.samlidp.eduteams.org"], "email": "student1@samlidp.eduteams.org", "name": "Student One", "given_name": "Student", "family_name": "One", "eduperson_scoped_affiliation": ["student@test.samlidp.eduteams.org", "member@test.samlidp.eduteams.org"], "eduperson_targeted_id": ["f5eb95e9a369ba3739f14c0d5eb56f49b1722924"], "sub": "c525e405eb2b4748a18167d7400e5bddc96d8f511b9cd28a734671224af830e4"}}
-        OIDCInfoHook userinfo
-
-        # note: not actually used by SBS, only for logging
-        #OIDCRemoteUserClaim {{ sbs_uid_attribute }}
-        OIDCRemoteUserClaim email
-
-        OIDCRedirectURI {{ sbs_base_url }}redirect_uri
-        OIDCCryptoPassphrase {{ sbs_oidc_crypto_password }}
-        OIDCSessionInactivityTimeout {{ sbs_openidc_timeout }}
-
         WSGIDaemonProcess server user=www-data group=www-data threads=5
 
         WSGIScriptAlias /api {{ sbs_git_dir }}/sbs-api.wsgi/api
@@ -54,15 +35,6 @@ Listen {{ sbs_backend_port }}
            RewriteEngine On
            RewriteCond %{REQUEST_FILENAME} !-f
            RewriteRule ^ /index.html [QSA,L]
-           OIDCUnAuthAction pass
-           AuthType openid-connect
-           Require valid-user
-        </LocationMatch>
-
-        <LocationMatch ^/login>
-           OIDCUnAuthAction auth
-           AuthType openid-connect
-           Require valid-user
         </LocationMatch>
 
 </VirtualHost>

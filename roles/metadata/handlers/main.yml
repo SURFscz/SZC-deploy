@@ -1,16 +1,4 @@
 ---
-- name: enable metadata job
-  systemd:
-    name: metadata.timer
-    enabled: true
-    state: started
-    daemon_reload: true
-
-- name: run metadata cronjob
-  command: "{{ metadata_project_dir }}/create_metadata"
-  args:
-    chdir: "{{ metadata_project_dir }}"
-
 - name: restart nginx
   service:
     name: nginx

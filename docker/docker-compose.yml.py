@@ -23,7 +23,7 @@ logical_hosts = [
     'proxy',    'mdq',         'cm',        'comanage',
     'ldap',     'meta',        'oidc-test', 'sp-test',
     'idp-test', 'google-test', 'sbs',       'sandbox1',
-    'pam',
+    'pam', 'oidc-op',
 ]
 
 subnet = '172.20.1'

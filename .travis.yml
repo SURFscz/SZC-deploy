@@ -65,11 +65,17 @@ after_script:
 
 after_failure:
   - "ansible -v -i environments/vm/inventory --become 'all' \
-             -m command -a '/bin/systemctl cat slapd.service'"
-  - "ansible -v -i environments/vm/inventory --become 'all' \
              -m command -a '/bin/journalctl -x -n100'"
   - "ansible -v -i environments/vm/inventory --become 'all' \
              -m command -a '/bin/netstat -nlptu'"
+  - "ansible -v -i environments/vm/inventory --become 'lb' \
+             -m command -a '/usr/bin/tail -n 100 /var/log/haproxy.log'"
+  - "ansible -v -i environments/vm/inventory --become 'sbs' \
+             -m command \
+             -a '/usr/bin/tail -n 100 /opt/sbs/sbs/log/sbs.log /opt/sbs-/sbs/log/sbs_debug.log'"
+  - "ansible -v -i environments/vm/inventory --become 'sbs' \
+             -m command \
+             -a '/usr/bin/tail -n 100 /var/log/apache2/access.log /var/log/apache2/error.log'"
 
 before_cache:
   - "ls -la $HOME/docker"

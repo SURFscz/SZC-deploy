@@ -1,0 +1,57 @@
+---
+
+- name: install PyFF
+  import_role:
+    name: "pyff"
+
+- name: Create local metadata directory
+  file:
+    path: "{{ pyff_env_dir }}/metadata"
+    state: directory
+    mode: 0755
+
+- name: Create pyFF mdq configuration
+  template:
+    src: mdq.fd.j2
+    dest: "{{ pyff_env_dir }}/mdq.fd"
+  notify: "restart pyff"
+  become: "yes"
+  become_user: pyff
+
+- name: Create pyFF systemd service
+  template:
+    src: "pyff.service.j2"
+    dest: "/etc/systemd/system/pyff.service"
+  register: pyff_systemd
+
+- name: enable pyff daemon
+  systemd:
+    name: pyff
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+  when: pyff_systemd.changed
+
+- name: Install filebeat configuration
+  template:
+    src: fb_pyffd.yml.j2
+    dest: /etc/filebeat/conf.d/fb_pyffd.yml
+  notify: "restart filebeat"
+
+- name: Copy rsyslog config
+  copy:
+    src: "rsyslog_pyffd.conf"
+    dest: "/etc/rsyslog.d/pyffd.conf"
+  notify: "restart rsyslog"
+
+- name: Copy logrotate config
+  copy:
+    src: "logrotate_pyffd"
+    dest: "/etc/logrotate.d/pyffd"
+
+- name: set up nxginx proxy
+  include: nginx.yml
+
+# nginx needs to be restarted _now_ rather than at the end of the play
+- name: flush handlers
+  meta: flush_handlers

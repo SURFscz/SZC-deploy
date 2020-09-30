@@ -4,6 +4,8 @@ http_proto: https
 simplesaml_download_url: "https://github.com/simplesamlphp/simplesamlphp/releases/download"
 simplesaml_version: "1.17.7"
 simplesaml_project_dir: "/opt/simplesaml"
+simplesaml_authsources_dir: "{{ simplesaml_project_dir }}/simplesaml/config/authsources"
+simplesaml_idpmetadata_dir: "{{ simplesaml_project_dir }}/simplesaml/metadata/idp"
 
 client_ssp_admin_pass: "admin"
 client_ssp_salt: "ThisIsNotASecretSalt,PleaseChangeMe!"

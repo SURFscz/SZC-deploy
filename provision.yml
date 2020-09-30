@@ -13,7 +13,7 @@
     - name: Get current datetime
       local_action:
         module: "command"
-        cmd: "date --iso-8601=seconds --utc"
+        cmd: "date -u '+%Y-%m-%dT%H:%M:%S%z'"
       register: datetime_now
       changed_when: false
     - name: Get local git version of deploy and inventory
@@ -53,8 +53,8 @@
     - { role: syslog-client,  tags: ['common','syslog']     }
     - { role: backups,        tags: ['common','backups']    }
     - { role: zabbix-agent,   tags: ['common','zabbix']     }
-    - { role: aws-cloudwatch, tags: ['common','cloudwatch'] }
-#    - { role: aws-cloudlogs,  tags: ['common','cloudlogs']  }
+    #- { role: aws-cloudwatch, tags: ['common','cloudwatch'], when: is_aws }
+    #- { role: aws-cloudlogs,  tags: ['common','cloudlogs'],  when: is_aws }
 
 #- name: "dns"
 #  hosts: mgnt1
@@ -102,6 +102,7 @@
     - { role: client-orcid-idp,     tags: ['client','client-orcid' ] }
     - { role: client-microsoft-idp, tags: ['client','client-ms'    ] }
     - { role: client-oidc-rp,       tags: ['client','client-rp'    ] }
+    - { role: oidc-op,              tags: ['client','oidc-op'      ] }
     - { role: client-2fa,           tags: ['client','client-2fa'   ], when: experimental_features }
 
 - name: "proxy"
@@ -109,18 +110,8 @@
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
-    - { role: pyff,          tags: ['proxy','pyff'          ] }
+    - { role: pyff-daemon,   tags: ['proxy','pyff-daemon'   ] }
     - { role: satosa,        tags: ['proxy','satosa'        ] }
-
-- name: "ldap"
-  hosts: ldap
-  tasks:
-    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
-  roles:
-    - { role: ldap_services,      tags: ['ldap', 'ldap-services' ] }
-    - { role: ldap,               tags: ['ldap'                  ] }
-    - { role: plsc,               tags: ['ldap', 'ldap-plsc'     ] }
-    - { role: pam_websso_daemon,  tags: ['client','websso-daemon'], when: experimental_features }
 
 - name: "sbs"
   hosts: sbs
@@ -130,13 +121,28 @@
     - { role: http_apache, tags: ['sbs']  }
     - { role: sbs,         tags: ['sbs']  }
 
+- name: "ldap"
+  hosts: ldap
+  tasks:
+    - { import_tasks: "tasks/versions.yml", tags: ['common'] }
+  roles:
+    - { role: ldap_services,      tags: ['ldap', 'ldap-services' ] }
+    - { role: ldap,               tags: ['ldap'                  ] }
+    - { role: pam_websso_daemon,  tags: ['client','websso-daemon'], when: experimental_features }
+
+- name: "first ldap"
+  hosts: ldap[0]
+  roles:
+    - { role: plsc,               tags: ['ldap', 'ldap-plsc'     ] }
+
 - name: "meta"
   hosts: meta
   tasks:
     - { import_tasks: "tasks/versions.yml", tags: ['common'] }
   roles:
-    - { role: http_dummy,  tags: ['meta','http'    ] }
-    - { role: metadata,    tags: ['meta','metadata'] }
+    - { role: pyff-metadata, tags: ['meta','pyff-metadata']}
+    - { role: http_dummy,    tags: ['meta','http'    ]     }
+    - { role: metadata,      tags: ['meta','metadata']     }
 
 - name: "sandbox"
   hosts: sandbox1

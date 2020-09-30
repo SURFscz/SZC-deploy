@@ -2,6 +2,7 @@
 meta_port: 80
 metadata_project_dir: "/opt/metadata"
 metadata_documentroot: "/var/www/metadata"
+proxy_metadata_baseurl: "https://{{ proxy_hostname }}/metadata"
 edugain_feed: "https://metadata.surfconext.nl/edugain-downstream.xml"
 edugain_cert: |
   -----BEGIN CERTIFICATE-----

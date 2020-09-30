@@ -1,6 +1,7 @@
 ---
 - name: Install required packages
   apt:
+    state: present
     name:
       - yarnpkg
       - nodejs
@@ -14,7 +15,6 @@
       - virtualenv
       - python3-distutils
       - libapache2-mod-wsgi-py3
-      - libapache2-mod-auth-openidc
 
 - name: enable Apache modules
   apache2_module:
@@ -22,7 +22,6 @@
     name: "{{item}}"
     ignore_configcheck: true
   with_items:
-    - auth_openidc
     - rewrite
     - headers
     - wsgi
@@ -140,4 +139,11 @@
     regexp: '(^MinProtocol.*)'
     replace: '#\1'
   when: not is_aws and use_fixed_cert
+
+- name: Remove obsolete packages
+  apt:
+    state: absent
+    name:
+      - libapache2-mod-auth-openidc
+  notify: restart Apache
 

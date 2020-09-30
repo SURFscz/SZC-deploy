@@ -3,7 +3,7 @@
 set -e
 
 CHARS_ALLOWED="A-Za-z0-9~!@#\$%^&*()_=+[]{}\\|;:<>,./?-"
-CHARS_ALLOWED="A-Za-z0-9_=+!?-"
+CHARS_ALLOWED="-A-Za-z0-9_=+/%#*&"
 
 if [ $# = 1 -a $(( $1 + 0 )) -gt 0 ]
 then
@@ -18,10 +18,11 @@ then
     ENCRYPT=1
 fi
 
-pw=""
+# make sure the password starts with a safe character
+pw=$( openssl rand 256 | tr -cd '0-9A-Za-z' | cut -c1 )
 while [ ${#pw} -lt $LEN ]
 do
-    pw=$pw$( openssl rand 256 | tr -cd "$CHARS_ALLOWED" )
+    pw=$pw$( openssl rand 256 | tr -cd -- "$CHARS_ALLOWED" )
     pw=${pw:0:$LEN}
 done
 

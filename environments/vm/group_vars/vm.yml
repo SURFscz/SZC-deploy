@@ -25,6 +25,7 @@ hostnames:
   orcid:    orcid-test.{{base_domain}}
   orcid_sb: orcid-sb-test.{{base_domain}}
   ms:       ms-test.{{base_domain}}
+  oidc_op:  oidc-op.{{base_domain}}
 
 idp_test_port: 81
 sp_test_port: 82
@@ -39,6 +40,9 @@ sbs_backend_port: 90
 tfa_test_port: 91
 pam_backend_port: 92
 meta_port: 88
+oidc_op_port: 93
+
+proxy_hostname: "proxy.{{base_domain}}"
 
 # COmanage-ldap configuration
 comanage_ldap_host: "ldap.vm.scz-vm.net"
@@ -106,6 +110,10 @@ loadbalancer:
     protocol: http
     backend_hosts: "{{groups['vm_client']}}"
     backend_port: "{{ms_test_port}}"
+  - hostname: "{{hostnames.oidc_op}}"
+    protocol: http
+    backend_hosts: "{{groups['vm_client']}}"
+    backend_port: "{{oidc_op_port}}"
   - hostname: "{{hostnames.pam}}"
     protocol: http
     backend_hosts: "{{groups['vm_ldap']}}"

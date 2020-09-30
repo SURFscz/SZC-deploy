@@ -1,0 +1,19 @@
+[Unit]
+Description=pyFF Meatdata processingew
+After=syslog.target network.target
+
+[Service]
+Type=oneshot
+User=pyff
+UMask=022
+LimitNOFILE=10240
+WorkingDirectory={{ pyff_env_dir }}
+ExecStart={{ pyff_env_dir }}/bin/pyff {{ pyff_env_dir }}/idp_feed.fd
+ExecStartPost=/bin/chmod 644 {{metadata_idps_targetfile}}.new
+ExecStartPost=/bin/mv {{metadata_idps_targetfile}}.new {{metadata_idps_targetfile}}
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=pyff-metadata
+
+[Install]
+WantedBy=multi-user.target

@@ -1,46 +1,11 @@
 <?php
-/**
- * SAML 2.0 IdP configuration for SimpleSAMLphp.
- *
- * See: https://simplesamlphp.org/docs/stable/simplesamlphp-reference-idp-hosted
- */
+# set config to empty array by default
+$config = array();
 
-$metadata['__DYNAMIC:1__'] = array(
-    'host' => '{{ hostnames.idp }}',
-    'OrganizationName' => '{{ environment_string }} IdP',
-    'OrganizationDisplayName' => '{{ environment_string }} IdP',
-    'OrganizationURL' => 'https://{{ hostnames.idp }}/',
-    'RegistrationInfo' => array(
-        'authority' => 'urn:mace:idp.foo.bar'
-        //'authority' => 'https://incommon.org'
-    ),
-    'UIInfo' => array(
-        'DisplayName' => array(
-            'en' => '{{ environment_string }} IdP'
-        ),
-        'Description' => array(
-            'en' => '{{ environment_string }} IdP description'
-        ),
-        'Logo' => array(
-            array(
-                'url' => 'https://{{ hostnames.idp }}/saml/resources/icons/ssplogo-fish-small.png',
-                'width' => 60,
-                'height' => 41
-            )
-        )
-    ),
-    'privatekey' => 'server.pem',
-    'certificate' => 'server.crt',
-    'auth' => 'crypto-hash',
-    'signature.algorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
-    'authproc' => array(
-        // Persistent NameID
-        110 => array('class' => 'saml:AttributeNameID',
-            'attribute' => 'urn:mace:dir:attribute-def:eduPersonPrincipalName',
-            'Format' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
-        ),
-    ),
-);
-
-
-
+# include all authsource snippets from the subdir
+$inc_files = glob("{{simplesaml_idpmetadata_dir}}/*.inc");
+natsort($inc_files);
+foreach ($inc_files as $filename)
+{
+    include $filename;
+}

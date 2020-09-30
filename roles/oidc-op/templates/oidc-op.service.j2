@@ -1,0 +1,17 @@
+[Unit]
+Description=OIDC-OP
+After=syslog.target network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory={{ oidc_dir }}/flask_op
+ExecStart={{ oidc_dir }}/bin/python {{ oidc_dir }}/flask_op/server.py config_op.yaml
+Restart=on-failure
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=oidc-op
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,14 @@
+- load:
+   - {{metadata_idps_xrd}}
+- select:
+{% for f in metadata_idps_filters %}
+  - "{{f}}"
+{% endfor %}
+- finalize:
+    cacheDuration: P7D
+    validUntil: P14D
+- sign:
+    key: certs/signing.key
+    cert: certs/signing.crt
+- publish: {{metadata_idps_targetfile}}.new
+- stats

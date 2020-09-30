@@ -1,24 +1,5 @@
 ---
-- name: restart filebeat
-  service:
-    name: filebeat
-    state: restarted
-  when: use_logserver
-  listen: "restart filebeat"
-
-- name: restart rsyslog
-  service:
-    name: rsyslog
-    state: restarted
-  listen: "restart rsyslog"
-
-- name: restart nginx
-  service:
-    name: nginx
-    state: restarted
-
-- name: restart pyff
-  service:
-    name: pyff
-    state: restarted
-
+# other roles that import htis role can also "listen" to this handler signal
+- name: pyff changed
+  assert:
+    that: true

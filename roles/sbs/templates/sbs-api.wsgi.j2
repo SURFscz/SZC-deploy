@@ -2,6 +2,7 @@ import os
 import sys
 
 os.environ['PROFILE'] = 'wsgi'
+os.environ['REQUESTS_CA_BUNDLE'] = "/etc/ssl/certs/ca-certificates.crt"
 
 activate_this = '{{ sbs_env_dir }}/bin/activate_this.py'
 with open(activate_this) as file_:

@@ -2,6 +2,9 @@
 # vim:ft=sh
 set -e
 
+#disable for now
+exit 0
+
 WFLAGS="--server-response --timeout=2 --tries=1 --no-verbose"
 
 basedir={{ metadata_project_dir }}
@@ -51,8 +54,8 @@ xalan -in sc_edugain_idps_nologo.xml -xsl "$basedir/nohide.xsl" -indent 2 > sc_e
 xalan -in sc_edugain_idps_nologo_nohide.xml -xsl "$basedir/nosc.xsl" -indent 2 > sc_edugain_idps_nologo_nohide_nosc.xml
 
 # Retrieve SATOSA generated md
-wget https://{{ hostnames.proxy }}/md/SamlIdP.xml $WFLAGS -O proxy_idp.xml
-wget https://{{ hostnames.proxy }}/md/SamlSP.xml  $WFLAGS -O proxy_sp.xml
+wget {{ proxy_metadata_baseurl }}/SamlIdP.xml $WFLAGS -O proxy_idp.xml
+wget {{ proxy_metadata_baseurl }}/SamlSP.xml  $WFLAGS -O proxy_sp.xml
 
 #rm -f /var/www/html/*.xml
 cp *.xml "{{ metadata_documentroot }}"
