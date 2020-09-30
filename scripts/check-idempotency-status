@@ -6,7 +6,8 @@ import json
 # ideally, everything should be zero (fully idempotent), but let's make at least sure the
 # amount of non-idempotent tests doen't increase
 WHITELIST = {
-    'ldap':                 2,
+    'ldap': 2,
+    'sbs':  1,
 }
 
 
