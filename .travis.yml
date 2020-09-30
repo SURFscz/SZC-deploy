@@ -47,6 +47,7 @@ before_install:
   - sudo adduser travis docker
   - sudo pip2 install --upgrade jinja2
   - pip install yamllint jinja2 pyyaml
+  - ansible-galaxy collection install -r requirements.yml
   - |
     # load docker images from cache
     if [ -d $HOME/docker ]; then
