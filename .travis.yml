@@ -48,6 +48,7 @@ before_install:
   - sudo pip2 install --upgrade jinja2
   - pip install yamllint jinja2 pyyaml
   - ansible-galaxy collection install -r requirements.yml
+  - ansible-config dump
   - |
     # load docker images from cache
     if [ -d $HOME/docker ]; then
