@@ -46,7 +46,7 @@
         encoding: utf8
 
     - name: Add SBS user
-      community.mysql.mysql_user:
+      mysql_user:
         login_host: '{{ db_host }}'
         login_user: '{{ db_admin_user }}'
         login_password: '{{ db_admin_password }}'
