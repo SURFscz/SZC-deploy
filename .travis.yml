@@ -42,8 +42,6 @@ before_install:
   - 'echo "options timeout:5"  | sudo tee -a /etc/resolvconf/resolv.conf.d/tail'
   - 'echo "options attempts:5" | sudo tee -a /etc/resolvconf/resolv.conf.d/tail'
   - sudo service resolvconf restart
-  - sudo apt-add-repository -y ppa:ansible/ansible-2.9
-  - sudo apt -q update
   - sudo apt -y install ansible bridge-utils
   - sudo adduser travis docker
   - sudo pip2 install --upgrade jinja2
