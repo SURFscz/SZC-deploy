@@ -1,4 +1,5 @@
 ---
+dist: focal
 sudo: required
 
 services:
@@ -26,7 +27,7 @@ notifications:
 
 language: python
 python:
-  - 3.6
+  - 3.8
 
 cache:
   pip: true
@@ -50,7 +51,6 @@ before_install:
   - ansible-galaxy collection install -r requirements.yml
   - find /home/travis/.ansible/collections
   - ansible-config dump
-  - ansible-galaxy collection list
   - |
     # load docker images from cache
     if [ -d $HOME/docker ]; then
