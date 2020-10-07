@@ -44,8 +44,7 @@ before_install:
   - sudo apt -q update
   - sudo apt -y install ansible bridge-utils
   - sudo adduser travis docker
-  - sudo pip2 install --upgrade jinja2
-  - pip install yamllint jinja2 pyyaml
+  - sudo pip install --upgrade yamllint jinja2 pyyaml
   - ansible-galaxy collection install -r requirements.yml
   - find /home/travis/.ansible/collections
   - ansible-config dump
