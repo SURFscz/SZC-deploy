@@ -66,6 +66,7 @@ after_script:
   - shred secret_vm
 
 after_failure:
+  - "find $HOME"
   - "ansible -v -i environments/vm/inventory --become 'all' \
              -m command -a '/bin/journalctl -x -n100'"
   - "ansible -v -i environments/vm/inventory --become 'all' \

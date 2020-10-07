@@ -8,7 +8,7 @@ then
 fi
 
 # activate correct python virtualenv
-source $HOME/virtualenv/python3.6/bin/activate
+source $HOME/virtualenv/python3.8/bin/activate
 
 echo '===================================================='
 echo '== Running Syntax Check'
