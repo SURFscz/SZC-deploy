@@ -38,10 +38,10 @@ git:
   submodules: false
 
 before_install:
-  - openssl enc -aes-256-cbc -md sha256 -k ${secret_pwd} -in secret_vm.enc -out secret_vm -d
   - 'echo "options timeout:5"  | sudo tee -a /etc/resolvconf/resolv.conf.d/tail'
   - 'echo "options attempts:5" | sudo tee -a /etc/resolvconf/resolv.conf.d/tail'
   - sudo service resolvconf restart
+  - sudo apt -q update
   - sudo apt -y install ansible bridge-utils
   - sudo adduser travis docker
   - sudo pip2 install --upgrade jinja2
@@ -58,6 +58,7 @@ before_install:
         #zcat "$f" | docker load || true;
       done;
     fi
+  - openssl enc -aes-256-cbc -md sha256 -k ${secret_pwd} -in secret_vm.enc -out secret_vm -d
 
 script:
   - ./scripts/travis_tests
