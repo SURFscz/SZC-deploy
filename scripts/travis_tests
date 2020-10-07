@@ -18,7 +18,7 @@ echo '===================================================='
 echo '===================================================='
 echo '== Starting deploy (run 1)'
 echo '===================================================='
-./start-vm --limit=db,sbs
+./start-vm
 echo
 
 # run second time, to check if reeantrace works ok
