@@ -27,7 +27,7 @@
 trap "tput sgr0; tput setaf 7; exit" SIGINT SIGTERM EXIT
 
 # container_names="lb proxy ldap comanage client meta"
-container_names="lb proxy ldap client meta db"
+container_names="lb proxy ldap client meta db sbs"
 
 GetFilterNameArguments() {
     local filter_names
