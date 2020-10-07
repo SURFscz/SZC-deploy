@@ -44,7 +44,7 @@ before_install:
   - sudo apt -q update
   - sudo apt -y install ansible bridge-utils
   - sudo adduser travis docker
-  - pip install --upgrade yamllint jinja2 pyyaml ansible
+  - pip install --upgrade yamllint jinja2 pyyaml ansible pymysql
   - ansible-galaxy collection install -r requirements.yml
   - find /home/travis/.ansible/collections
   - ansible-config dump
@@ -66,7 +66,7 @@ after_script:
   - shred secret_vm
 
 after_failure:
-  - "find $HOME"
+  #- "find $HOME"
   - "ansible -v -i environments/vm/inventory --become 'all' \
              -m command -a '/bin/journalctl -x -n100'"
   - "ansible -v -i environments/vm/inventory --become 'all' \
