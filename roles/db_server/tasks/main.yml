@@ -9,7 +9,6 @@
   apt:
     name:
       - mariadb-server
-      - python-pymysql
       - python3-pymysql
     state: present
 

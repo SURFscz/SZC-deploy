@@ -93,7 +93,7 @@
 - name: Enable LDAPS
   command: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f "{{ ldap_ldif_dir }}/enable_tls.ldif"
   register: result
-  failed_when: result.rc not in [0,20,68] or ansible_version.full is version_compare('2.10', '>=')
+  failed_when: result.rc not in [0,20,68] or ansible_version.full is version_compare('2.11', '>=')
 
 # OpenLDAP does not like adding existing entries again. Only add the
 # schema if it has not been added already. This does not yet take care
