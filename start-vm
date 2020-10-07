@@ -23,6 +23,26 @@ echo "Bringing docker containers up"
 ./docker/docker-compose.yml.py > ./docker/docker-compose.yml
 time docker-compose -f docker/docker-compose.yml up --no-recreate -d
 
+echo "Waiting until containers have booted"
+for c in $(docker ps -q)
+do
+    host=$(docker inspect --format='{{.Config.Hostname}}'     $c)
+    printf " - %-10s" $host
+    while true
+    do
+        stat=$(docker inspect --format='{{.State.Health.Status}}' $c)
+        if [ "$stat" = "healthy" ]
+        then
+            tput setaf 2
+            echo "OK"
+            tput sgr0
+            break
+        fi
+        echo -n "."
+        sleep 0.5
+    done
+done
+
 echo "Starting ansible"
 time \
 ansible-playbook provision.yml \
