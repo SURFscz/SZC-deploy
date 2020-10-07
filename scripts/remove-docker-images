@@ -287,4 +287,4 @@ fi
 
 StopRunningContainers
 RemoveContainers
-RemoveImages $images
+#RemoveImages $images
