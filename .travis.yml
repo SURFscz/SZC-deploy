@@ -44,7 +44,7 @@ before_install:
   - sudo apt -q update
   - sudo apt -y install ansible bridge-utils
   - sudo adduser travis docker
-  - pip install --upgrade yamllint jinja2 pyyaml ansible pymysql
+  - pip install --upgrade yamllint jinja2 pyyaml ansible~=2.9.0
   - ansible-galaxy collection install -r requirements.yml
   - find /home/travis/.ansible/collections
   - ansible-config dump
