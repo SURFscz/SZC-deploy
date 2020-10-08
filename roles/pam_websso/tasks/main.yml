@@ -11,6 +11,7 @@
       - build-essential
       - python-dev
       - python-pip
+      - python3-pip
       - python-openssl
       - python-setuptools
       - python-wheel
@@ -32,7 +33,7 @@
 
 - name: install PAM WebSSO
   pip:
-    excutable: "pip2"
+    excutable: "/usr/bin/pip2"
     name: "{{ pam_websso.project_dir }}"
     state: latest
   when: pam_websso_git.changed
