@@ -19,6 +19,7 @@
 
 - name: install WebSSO daemon
   pip:
+    executable: "pip2"
     name: "{{ pam_websso.project_dir }}"
     state: latest
   when: pam_websso_git.changed
