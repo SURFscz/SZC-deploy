@@ -1,4 +1,9 @@
 ---
+os: linux
+group: edge
+arch: "arm64-graviton2"
+virt: lxd
+
 dist: focal
 sudo: required
 
