@@ -18,6 +18,7 @@
       - python-openssl
       - python-defusedxml
       - python-isodate
+      - pkg-config
     state: present
     install_recommends: no
 

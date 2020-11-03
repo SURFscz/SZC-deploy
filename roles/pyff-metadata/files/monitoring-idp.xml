@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:mdrpi="urn:oasis:names:tc:SAML:metadata:rpi" xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" entityID="http://localhost:8080/saml2/idp/metadata.php">
+  <md:Extensions>
+    <mdrpi:RegistrationInfo xmlns:mdrpi="urn:oasis:names:tc:SAML:metadata:rpi" registrationAuthority="urn:mace:idp.foo.bar"/>
+  </md:Extensions>
+  <md:IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+    <md:Extensions>
+      <mdui:UIInfo xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui">
+        <mdui:DisplayName xml:lang="en">Selenium Test IdP</mdui:DisplayName>
+        <mdui:Description xml:lang="en">Selenium Test IdP description</mdui:Description>
+      </mdui:UIInfo>
+    </md:Extensions>
+    <md:KeyDescriptor use="signing">
+      <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+        <ds:X509Data>
+          <ds:X509Certificate>MIIDcDCCAligAwIBAgIJAPuKyXmrCdxlMA0GCSqGSIb3DQEBCwUAMGAxCzAJBgNVBAYTAk5MMRYwFAYDVQQKDA1sb2NhbGhvc3QtaWRwMRYwFAYDVQQDDA1sb2NhbGhvc3QtaWRwMSEwHwYJKoZIhvcNAQkBFhJpbmZvQGxvY2FsaG9zdC1pZHAwHhcNMjAxMDMwMTI0ODA5WhcNMzAxMDI4MTI0ODA5WjBgMQswCQYDVQQGEwJOTDEWMBQGA1UECgwNbG9jYWxob3N0LWlkcDEWMBQGA1UEAwwNbG9jYWxob3N0LWlkcDEhMB8GCSqGSIb3DQEJARYSaW5mb0Bsb2NhbGhvc3QtaWRwMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAliI99WmBF+MJ0mzE/Dke377Tsb3ufAa4VSnCEX/YDPCKyZQypbsNufWbkF+Yx4Ys4ub3WmP6gvyJ5h9T0hVhVuA+cKlfpfkbtSM16vpv5vn+/Asy4LHtwDx41ni2yvD1XvN8ZlmYGewsN+w5hem+gMg/dIEsmUukrlQBDOtfkGM/ny7vKNJl1SCx6ZV2yTy+JsyaDB8f+IsmSeamxXV1tixeSCUW1Js+KFkevfIpxlBKpkY8krpNcHp4NzZTc5nR5B0qJUvJ8MG1Rz7thxObiT5gM4DB0yRVM4K0DYGzyOfVMfxmm0UqDR2+Qh27488SfrgkIv/pR1lQxlMbs7j6ZQIDAQABoy0wKzApBgNVHREEIjAggg1sb2NhbGhvc3QtaWRwgg8qLmxvY2FsaG9zdC1pZHAwDQYJKoZIhvcNAQELBQADggEBAFpjaPVyMPPs8E1jfG/ueILIlxCQUAv3Xk8cLMVu4S7F3QRm5X3CdU1lCHPZ9GndXt/FAsUVmRj41gyto0GEV651eaGIWxYk8qX4YfOb2LaISVOxk8SlkYuDTUiVx9FReEo5KMfGbwyHn8qSnXKGxVnJteDQEh6PN9vDx36Cn5ev2z/lqIcOhJpV+RVn4puUliLIhM3l9FfxyI4kckX7m5vscpZ/7jSPihyKLZIZ229cnASm90GnTiMEWq6i70FkiOVGcgiR9XkAMqx5wHKUioyZoS/rTsUN5VyxGYOhvPECiH3ET1EnGAxyuzbhpumiT35VUL8NfmZVYJvBjlND5DQ=</ds:X509Certificate>
+        </ds:X509Data>
+      </ds:KeyInfo>
+    </md:KeyDescriptor>
+    <md:KeyDescriptor use="encryption">
+      <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+        <ds:X509Data>
+          <ds:X509Certificate>MIIDcDCCAligAwIBAgIJAPuKyXmrCdxlMA0GCSqGSIb3DQEBCwUAMGAxCzAJBgNVBAYTAk5MMRYwFAYDVQQKDA1sb2NhbGhvc3QtaWRwMRYwFAYDVQQDDA1sb2NhbGhvc3QtaWRwMSEwHwYJKoZIhvcNAQkBFhJpbmZvQGxvY2FsaG9zdC1pZHAwHhcNMjAxMDMwMTI0ODA5WhcNMzAxMDI4MTI0ODA5WjBgMQswCQYDVQQGEwJOTDEWMBQGA1UECgwNbG9jYWxob3N0LWlkcDEWMBQGA1UEAwwNbG9jYWxob3N0LWlkcDEhMB8GCSqGSIb3DQEJARYSaW5mb0Bsb2NhbGhvc3QtaWRwMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAliI99WmBF+MJ0mzE/Dke377Tsb3ufAa4VSnCEX/YDPCKyZQypbsNufWbkF+Yx4Ys4ub3WmP6gvyJ5h9T0hVhVuA+cKlfpfkbtSM16vpv5vn+/Asy4LHtwDx41ni2yvD1XvN8ZlmYGewsN+w5hem+gMg/dIEsmUukrlQBDOtfkGM/ny7vKNJl1SCx6ZV2yTy+JsyaDB8f+IsmSeamxXV1tixeSCUW1Js+KFkevfIpxlBKpkY8krpNcHp4NzZTc5nR5B0qJUvJ8MG1Rz7thxObiT5gM4DB0yRVM4K0DYGzyOfVMfxmm0UqDR2+Qh27488SfrgkIv/pR1lQxlMbs7j6ZQIDAQABoy0wKzApBgNVHREEIjAggg1sb2NhbGhvc3QtaWRwgg8qLmxvY2FsaG9zdC1pZHAwDQYJKoZIhvcNAQELBQADggEBAFpjaPVyMPPs8E1jfG/ueILIlxCQUAv3Xk8cLMVu4S7F3QRm5X3CdU1lCHPZ9GndXt/FAsUVmRj41gyto0GEV651eaGIWxYk8qX4YfOb2LaISVOxk8SlkYuDTUiVx9FReEo5KMfGbwyHn8qSnXKGxVnJteDQEh6PN9vDx36Cn5ev2z/lqIcOhJpV+RVn4puUliLIhM3l9FfxyI4kckX7m5vscpZ/7jSPihyKLZIZ229cnASm90GnTiMEWq6i70FkiOVGcgiR9XkAMqx5wHKUioyZoS/rTsUN5VyxGYOhvPECiH3ET1EnGAxyuzbhpumiT35VUL8NfmZVYJvBjlND5DQ=</ds:X509Certificate>
+        </ds:X509Data>
+      </ds:KeyInfo>
+    </md:KeyDescriptor>
+    <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="http://localhost:8080/saml2/idp/SingleLogoutService.php"/>
+    <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
+    <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="http://localhost:8080/saml2/idp/SSOService.php"/>
+  </md:IDPSSODescriptor>
+  <md:Organization>
+    <md:OrganizationName xml:lang="en">Selenium Test IdP</md:OrganizationName>
+    <md:OrganizationDisplayName xml:lang="en">Selenium Test IdP</md:OrganizationDisplayName>
+    <md:OrganizationURL xml:lang="en">https://www.surf.nl/</md:OrganizationURL>
+  </md:Organization>
+  <md:ContactPerson contactType="technical">
+    <md:GivenName>Administrator</md:GivenName>
+    <md:EmailAddress>mailto:me@example.org</md:EmailAddress>
+  </md:ContactPerson>
+</md:EntityDescriptor>

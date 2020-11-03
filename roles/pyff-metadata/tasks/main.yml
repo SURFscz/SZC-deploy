@@ -10,6 +10,24 @@
     dest: "{{metadata_idps_xrd}}"
   notify: "run pyff-metadata job"
 
+- name: Create metadata source directory
+  file:
+    path: "{{ metadata_source_dir }}"
+    state: "directory"
+    mode: "0755"
+    owner: "root"
+
+- name: install IdP metadata
+  copy:
+    src: "{{item}}"
+    dest: "{{ metadata_source_dir }}"
+    mode: "0644"
+    owner: "root"
+  with_items:
+    - "monitoring-idp.xml"
+  notify:
+    - "run pyff-metadata job"
+
 - name: Create pyFF mdq configuration
   template:
     src: "idp_feed.fd.j2"

@@ -51,6 +51,10 @@ mail:
   sender_email: {{ sbs_mail_sender_email }}
   suppress_sending_mails: False
   info_email: scz-support@surfnet.nl
+  send_exceptions: False
+  send_js_exceptions: False
+  send_exceptions_recipients: ["sram-support@surfnet.nl"]
+  environment: "{{ base_domain }}"
 
 aup:
   pdf: SURFresearch-Access-Management-AUP-01122019-0001.pdf
@@ -76,6 +80,7 @@ retention:
   reminder_expiry_period_days: 14
   reminder_resent_period_days: 7
   cron_hour_of_day: {{ sbs_cron_hour_of_day }}
+  remove_suspended_users_period_days: 540
 
 service_bus:
   enabled: False

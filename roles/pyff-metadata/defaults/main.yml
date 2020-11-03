@@ -1,6 +1,7 @@
 ---
 metadata_idps_xrd: "{{pyff_env_dir}}/certs/surfconext.xrd"
 metadata_idps_targetfile: "{{pyff_metadata_dir}}/idps.xml"
+metadata_source_dir: "/opt/metadata-src"
 
 metadata_idps_feed: "https://metadata.surfconext.nl/idps-metadata.xml"
 metadata_idps_cert: |
