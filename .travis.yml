@@ -43,6 +43,7 @@ git:
   submodules: false
 
 before_install:
+  - sudo sestatus
   - sudo apt -q update
   - sudo apt -y install ansible bridge-utils
   - sudo adduser travis docker
