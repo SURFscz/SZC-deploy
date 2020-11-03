@@ -43,9 +43,6 @@ git:
   submodules: false
 
 before_install:
-  - 'echo "options timeout:5"  | sudo tee -a /etc/resolvconf/resolv.conf.d/tail'
-  - 'echo "options attempts:5" | sudo tee -a /etc/resolvconf/resolv.conf.d/tail'
-  - sudo service resolvconf restart
   - sudo apt -q update
   - sudo apt -y install ansible bridge-utils
   - sudo adduser travis docker
