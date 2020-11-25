@@ -12,6 +12,14 @@
     dest: /etc/apt/apt.conf.d/00-scz-release
   register: apt_default_release
 
+- name: pinning backports priority
+  template:
+    src: "backports-priority.j2"
+    dest: "/etc/apt/preferences.d/backports-priority"
+    owner: root
+    group: root
+    mode: 0644
+
 # we need to do this manually, because ansible's apt module doesn't handle the default-release
 # setting correctly
 - name: Update cache
@@ -70,7 +78,7 @@
     cache_valid_time: 86400
     update_cache: yes
     autoclean: yes
-  when: "environment_name != 'vm'"
+  #when: "environment_name != 'vm'"
 
 - name: install VMware clients
   apt:

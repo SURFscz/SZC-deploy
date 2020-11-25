@@ -4,4 +4,4 @@ debian_dist: 'buster'
 debian:
   mirror: 'http://deb.debian.org/debian/'
   security_mirror: 'http://deb.debian.org/debian-security/'
-
+  backports_priority: 990

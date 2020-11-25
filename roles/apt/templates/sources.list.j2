@@ -2,6 +2,7 @@
 {%   set sections = "main" %}
 deb {{debian.mirror}} {{debian_dist}} {{sections}}
 deb {{debian.mirror}} {{debian_dist}}-updates {{sections}}
+deb {{debian.mirror}} {{debian_dist}}-backports {{sections}}
 deb {{debian.security_mirror}} {{debian_dist}}/updates {{sections}}
 {% endif -%}
 {% if ansible_distribution == 'Ubuntu' %}
