@@ -82,7 +82,7 @@ frontend fe_https
     http-response set-header Referrer-Policy "strict-origin-when-cross-origin"
 
     # rewrite all cookies to be secure and HttpOnly
-    rspirep ^(set-cookie\ .*)(\s*;\s*(secure|httponly))*$   \1;secure;httponly
+    http-response replace-header Set-Cookie (.*)(\s*;\s*(secure|httponly))* \1;secure;httponly
 
     # insert strict CSP if none was set
     acl has_csp_header res.hdr(Content-Security-Policy) -m found
