@@ -1,0 +1,35 @@
+---
+
+- name: install NGINX config file
+  template:
+    src: nginx-checksum.conf.j2
+    dest: /etc/nginx/sites-enabled/00-checksum.conf
+  notify: restart nginx
+
+- name: Ensure that ldap_checksum_dir exist
+  file:
+    path: "{{ ldap_checksum_dir }}"
+    state: directory
+    mode: 0755
+
+- name: Create checksum.sh script
+  template:
+    src: checksum.sh.j2
+    dest: "{{ ldap_checksum_dir }}/checksum.sh"
+    mode: 0755
+
+- name: Copy ldifchecksum.py script
+  copy:
+    src: ldifchecksum.py
+    dest: "{{ ldap_checksum_dir }}/ldifchecksum.py"
+    mode: 0755
+
+- name: Copy checksum service files
+  template:
+    src: "{{item}}.j2"
+    dest: "/etc/systemd/system/{{item}}"
+  with_items:
+    - checksum.service
+    - checksum.timer
+  notify:
+    - enable checksum job

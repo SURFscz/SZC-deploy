@@ -121,3 +121,6 @@
   register: result
   failed_when: result.rc not in [0,20,68]
   changed_when: result.rc not in [20,68]
+
+- name: set up checksum
+  include: checksum.yml

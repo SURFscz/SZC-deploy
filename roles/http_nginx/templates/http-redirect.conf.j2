@@ -21,9 +21,11 @@ server {
 	server_name {{ h.hostname }};
     access_log /var/log/nginx/access.log sram;
 
+{% if letsencrypt is defined %}
 	location /.well-known/acme-challenge {
 		alias {{letsencrypt.acme_challenge_dir}}/.well-known/acme-challenge;
 	}
+{% endif %}
 
 	location / {
 		rewrite ^(.*) https://{{ h.hostname }}$1 permanent;

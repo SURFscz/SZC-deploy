@@ -39,5 +39,8 @@
     dest: "/etc/systemd/system/websso-daemon.service"
     mode: 0644
 
-- name: set up nxginx proxy
-  include: nginx.yml
+- name: install NGINX config file
+  template:
+    src: nginx-pam.conf.j2
+    dest: /etc/nginx/sites-enabled/00-pam.conf
+  notify: restart nginx

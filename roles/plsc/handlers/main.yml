@@ -1,14 +1,21 @@
 ---
 - name: enable lsc job
   systemd:
-    name: lsc.timer
+    name: "{{ item }}"
     enabled: true
     state: started
     daemon_reload: true
+  with_items:
+    - lsc.timer
+    - lsc.service
 
 - name: enable plsc job
   systemd:
-    name: plsc.timer
+    name: "{{ item }}"
     enabled: true
     state: started
     daemon_reload: true
+  with_items:
+    - plsc.timer
+    - plsc.service
+

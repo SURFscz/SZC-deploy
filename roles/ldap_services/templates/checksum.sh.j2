@@ -1,0 +1,3 @@
+#!/bin/sh
+export PYTHONHASHSEED=0
+slapcat -H ldaps:///{{ services_ldap.basedn }} -a '(!(entryDN:={{ services_ldap.basedn }}))' 2>/dev/null | {{ ldap_checksum_dir }}/ldifchecksum.py

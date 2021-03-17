@@ -4,3 +4,7 @@ ldap_ldif_dir: "{{ ldap_install_dir }}/schema"
 
 ldap_user: openldap
 ldap_group: openldap
+
+ldap_checksum_dir: /opt/checksum
+ldap_checksum_docroot: /var/www/html
+ldap_checksum_port: 94
