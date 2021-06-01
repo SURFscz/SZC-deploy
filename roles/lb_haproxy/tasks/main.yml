@@ -88,23 +88,3 @@
     name: haproxy
     state: started
     enabled: true
-
-- name: install LDAP (un)fencing scripts
-  template:
-    src: "{{ item }}.j2"
-    dest: "/opt/{{ item }}"
-    mode: 0755
-    owner: root
-    group: root
-  with_items:
-    - fence.sh
-    - unfence.sh
-  notify: restart fence
-
-- name: Copying fence service script
-  become: true
-  copy:
-    src: "fence.service"
-    dest: "/etc/systemd/system/fence.service"
-  notify: restart fence
-
