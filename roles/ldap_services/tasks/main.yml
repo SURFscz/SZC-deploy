@@ -104,7 +104,7 @@
   changed_when: result.rc not in [20,68]
 
 - name: Configure memberof overlay
-  ldap_attr:
+  ldap_attrs:
     dn: "olcOverlay={0}memberof,olcDatabase={1}mdb,cn=config"
     state: 'exact'
     name: "{{item.key}}"
