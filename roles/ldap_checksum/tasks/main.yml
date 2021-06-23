@@ -1,0 +1,33 @@
+---
+- name: "install python ldap module"
+  apt:
+    name: "python3-ldap"
+    state: "present"
+
+- name: "Ensure that ldap_checksum_dir exist"
+  file:
+    path: "{{ ldap_checksum_dir }}"
+    state: "directory"
+    mode: "0755"
+
+- name: "Create ldap_checksum.sh script"
+  template:
+    src: "ldap_checksum.sh.j2"
+    dest: "{{ ldap_checksum_dir }}/ldap_checksum.sh"
+    mode: "0755"
+
+- name: Copy ldifchecksum.py script
+  copy:
+    src: ldifchecksum.py
+    dest: "{{ ldap_checksum_dir }}/ldifchecksum.py"
+    mode: 0755
+
+- name: Copy checksum service files
+  template:
+    src: "{{item}}.j2"
+    dest: "/etc/systemd/system/{{item}}"
+  with_items:
+    - "ldap_checksum.service"
+    - ldap_checksum.timer"
+  notify:
+    - "enable checksum job"

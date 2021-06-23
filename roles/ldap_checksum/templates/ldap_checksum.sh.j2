@@ -1,0 +1,8 @@
+#!/bin/sh
+set -e
+TMPFILE=$(mktemp "{{ldap_checksum_file}}_XXXXXX")
+slapcat -H ldaps:///{{ services_ldap.basedn }} -a '(!(entryDN:={{ services_ldap.basedn }}))' 2> /dev/null \
+    | {{ ldap_checksum_dir }}/ldifchecksum.py \
+    > $TMPFILE
+mv "$TMPFILE" "{{ldap_checksum_file}}"
+exit 0

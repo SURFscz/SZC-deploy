@@ -1,0 +1,3 @@
+---
+ldap_checksum_dir: "/opt/ldap_checksum"
+ldap_checksum_file: "/opt/ldap_checksum/ldap-chksum.txt"
